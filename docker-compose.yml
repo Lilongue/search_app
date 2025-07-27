@@ -6,4 +6,4 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - CHROMEDRIVER_PATH=/usr/bin/chromedriver
+      - CHROMEDRIVER_PATH=/usr/local/bin/chromedriver

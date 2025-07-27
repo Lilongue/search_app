@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-import time
+import os
 
 app = Flask(__name__)
 
@@ -13,11 +13,12 @@ def scrape():
         return jsonify({"error": "URL required"}), 400
 
     try:
+        # Use environment variable for ChromeDriver path
+        driver_path = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')  # Run in background
-        driver = webdriver.Chrome(service=Service(), options=options)
+        driver = webdriver.Chrome(service=Service(driver_path), options=options)
         driver.get(url)
-        time.sleep(5)  # Wait for page load
         html = driver.page_source  # Get raw HTML
         driver.quit()
         return jsonify({"html": html})
@@ -26,4 +27,3 @@ def scrape():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
