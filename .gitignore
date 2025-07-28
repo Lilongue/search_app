@@ -1,0 +1,29 @@
+# Byte-compiled / optimized Python
+*.py[cod]
+
+# Logging and cache directories
+__pycache__/
+*.py[cod]
+
+# Distribution archives
+.dist-tags/
+dist/
+build/
+eggs/
+sdist/
+*.egg
+*.egg-info/
+
+# Editor/IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.DS_Store
+
+# Temporary files
+*~
+*.tmp
+
+# Binary files
+scrap_app/chromedriver
