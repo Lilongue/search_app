@@ -18,11 +18,11 @@ class SiteInfoExtractor:
 
     def get_site_info(self, url_link):
         siteExecutor = SiteExecutorFactory.get_executor(url_link)
-        # return str(siteExecutor)
 
         try:
             site, company_name, inn_code = siteExecutor.get_site_info(url_link)
             self._company_name = company_name
+            self._inn_code = inn_code
             soup = BeautifulSoup(site, 'html.parser')
             cleaned_html = '\n'.join([line for line in soup.stripped_strings])
             self._processed_content = cleaned_html.strip()
