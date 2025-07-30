@@ -27,3 +27,6 @@ sdist/
 
 # Binary files
 scrap_app/chromedriver
+
+# env
+.venv/
