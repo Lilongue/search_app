@@ -8,7 +8,7 @@ class SiteExecutorFactory:
         if "yandex.ru/maps" in url:
             return MapsSeleniumSiteExecutor()  # + +
         elif "2gis.ru" in url:
-            return TwogisSeleniumSiteExecutor()
+            return TwogisSeleniumSiteExecutor()  # + -
         elif "zoon.ru" in url:
             return ZoonSeleniumSiteExecutor()
         elif "yell.ru" in url:
@@ -110,10 +110,18 @@ class TwogisSeleniumSiteExecutor(SeleniumSiteExecutor):
        """
        Класс для получения сайта 2gis.ru
        """
+       PHONE_XPATH = '//button[text()="Показать телефоны"]'
+       COMPANY_NAME_XPATH = '//span[@itemprop="name"]'
 
        def get_site_info(self, url_link):
         try:
             self.driver = self.selenium_handler.get_interactive_driver(url_link)
+            try:
+                element = self.driver.find_element(By.XPATH, self.PHONE_XPATH)
+                if element and element.is_displayed() and element.is_enabled():
+                    element.click()
+            except Exception as e:
+                print(f"Error fetching website {url_link}: {e}")
             return self.driver.page_source, self._get_company_name(), self._get_inn_code()
         except Exception as e:
             print(f"Error getting site info for {url_link}: {e}")
@@ -127,9 +135,7 @@ class TwogisSeleniumSiteExecutor(SeleniumSiteExecutor):
        
        def _get_company_name(self):
             return None
-       
-       def _get_inn_code(self):
-            return None
+
 
 class ZoonSeleniumSiteExecutor(SeleniumSiteExecutor):
        """
@@ -208,9 +214,9 @@ class RusProfileSeleniumSiteExecutor(SeleniumSiteExecutor):
        COMPANY_NAME_XPATH = '//h1[@itemprop="name"]'
        COMPANY_INN_XPATH = '//span[@id="clip_inn"]'
 
-       def get_site_info(self, url_link):
-            self.driver.get(url_link)
-            return self.driver.page_source, self._get_company_name(), self._get_inn_code()
+    #    def get_site_info(self, url_link):
+    #         self.driver.get(url_link)
+    #         return self.driver.page_source, self._get_company_name(), self._get_inn_code()
        
        def _get_company_name(self):
             if not self.driver.page_source:
@@ -242,9 +248,9 @@ class RbcSeleniumSiteExecutor(SeleniumSiteExecutor):
        """
        COMPANY_NAME_XPATH = '//h1[@class="company-headline__title"]/span'
 
-       def get_site_info(self, url_link):
-            self.driver.get(url_link)
-            return self.driver.page_source, self._get_company_name(), self._get_inn_code()
+    #    def get_site_info(self, url_link):
+    #         self.driver.get(url_link)
+    #         return self.driver.page_source, self._get_company_name(), self._get_inn_code()
        
        def _get_company_name(self):
             if not self.driver.page_source:
