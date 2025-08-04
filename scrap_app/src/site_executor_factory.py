@@ -29,13 +29,13 @@ class SiteExecutorFactory:
         elif "vk.com" in url:
             return VkSeleniumSiteExecutor()  # + +
         elif "e-ecolog.ru" in url:
-            return EecologSeleniumSiteExecutor()
+            return EecologSeleniumSiteExecutor()  # тут натыкаемся на капчу
         elif "asktel.ru" in url:
-            return AsktelSeleniumSiteExecutor()
+            return AsktelSeleniumSiteExecutor()  # + +
         elif "bizly.ru" in url:
-            return BizlySeleniumSiteExecutor()
-        elif "sbis.ru" in url:
-            return SbisSeleniumSiteExecutor()
+            return BizlySeleniumSiteExecutor()  # + +
+        # elif "sbis.ru" in url:
+        #     return SbisSeleniumSiteExecutor()  # этого сайта больше нет
         else:
             return SeleniumSiteExecutor()  # + +
 
@@ -408,59 +408,56 @@ class VkSeleniumSiteExecutor(SeleniumSiteExecutor):
 
 class EecologSeleniumSiteExecutor(SeleniumSiteExecutor):
     """
-       Класс для получения сайта e-ecolog.ru
-       """
+    Класс для получения сайта e-ecolog.ru
+    """
+    pass  # TODO: реализовать не открывается через selenium. Натыкаемся на капчу
 
-    def _get_company_name(self):
-        return None
-
-    def _get_inn_code(self):
-        return None
 
 
 class AsktelSeleniumSiteExecutor(SeleniumSiteExecutor):
     """
-       Класс для получения сайта asktel.ru
-       """
-
-    #    def get_site_info(self, url_link):
-    #         self.driver.get(url_link)
-    #         return self.driver.page_source, self._get_company_name(), self._get_inn_code()
+    Класс для получения сайта asktel.ru
+    """
+    COMPANY_NAME_XPATH = '//h1[@itemprop="name"]'
 
     def _get_company_name(self):
-        return None
-
-    def _get_inn_code(self):
+        if not self.driver.page_source:
+            return None
+        try:
+            head_elements = self.driver.find_elements(By.TAG_NAME, 'h1')
+            if not head_elements:
+                return None
+            name_element = head_elements[0]
+        except Exception as e:
+            print(f"Error fetching website: {e}")
+            name_element = None
+        if name_element and name_element.is_displayed():
+            return name_element.text
         return None
 
 
 class BizlySeleniumSiteExecutor(SeleniumSiteExecutor):
     """
-       Класс для получения сайта bizly.ru
-       """
-
-    #    def get_site_info(self, url_link):
-    #         self.driver.get(url_link)
-    #         return self.driver.page_source, self._get_company_name(), self._get_inn_code()
-
-    def _get_company_name(self):
-        return None
-
-    def _get_inn_code(self):
-        return None
-
-
-class SbisSeleniumSiteExecutor(SeleniumSiteExecutor):
+    Класс для получения сайта bizly.ru
     """
-       Класс для получения сайта sbis.ru
-       """
-
-    #    def get_site_info(self, url_link):
-    #         self.driver.get(url_link)
-    #         return self.driver.page_source, self._get_company_name(), self._get_inn_code()
 
     def _get_company_name(self):
+        if not self.driver.page_source:
+            return None
+        try:
+            head_elements = self.driver.find_elements(By.TAG_NAME, 'h1')
+            if not head_elements:
+                return None
+            name_element = head_elements[0]
+        except Exception as e:
+            print(f"Error fetching website: {e}")
+            name_element = None
+        if name_element and name_element.is_displayed():
+            return name_element.text
         return None
 
-    def _get_inn_code(self):
-        return None
+# class SbisSeleniumSiteExecutor(SeleniumSiteExecutor):
+#     """
+#     Класс для получения сайта sbis.ru
+#     """
+#     pass  # TODO: 'этого сайта больше нет'
