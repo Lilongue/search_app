@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 import re
 from selenium_handler import SeleniumHandler
 
+
 class SiteExecutorFactory:
     @staticmethod
     def get_executor(url):
@@ -38,14 +39,16 @@ class SiteExecutorFactory:
         else:
             return SeleniumSiteExecutor()  # + +
 
+
 class SeleniumSiteExecutor:
     """
     Класс для получения сайта с помощью Selenium WebDriver
     """
+
     def __init__(self):
         self.selenium_handler = SeleniumHandler()
         self.driver = None
-    
+
     def get_site_info(self, url_link):
         try:
             self.driver = self.selenium_handler.get_interactive_driver(url_link)
@@ -59,7 +62,7 @@ class SeleniumSiteExecutor:
                 self.selenium_handler.cleanup_driver(self.driver)
             if self.driver:
                 self.driver = None
-    
+
     def _get_company_name(self):
         return None
 
@@ -93,7 +96,7 @@ class MapsSeleniumSiteExecutor(SeleniumSiteExecutor):
                 self.selenium_handler.cleanup_driver(self.driver)
             if self.driver:
                 self.driver = None
-    
+
     def _get_company_name(self):
         if not self.driver.page_source:
             return None
@@ -133,7 +136,7 @@ class TwogisSeleniumSiteExecutor(SeleniumSiteExecutor):
                 self.selenium_handler.cleanup_driver(self.driver)
             if self.driver:
                 self.driver = None
-    
+
     def _get_company_name(self):
         if not self.driver.page_source:
             return None
@@ -173,7 +176,6 @@ class ZoonSeleniumSiteExecutor(SeleniumSiteExecutor):
             if self.driver:
                 self.driver = None
 
-    
     def _get_company_name(self):
         if not self.driver.page_source:
             return None
@@ -213,21 +215,22 @@ class YellSeleniumSiteExecutor(SeleniumSiteExecutor):
                 self.selenium_handler.cleanup_driver(self.driver)
             if self.driver:
                 self.driver = None
-    
+
     def _get_company_name(self):
-            if not self.driver.page_source:
-                return None
-            try:
-                requesite_rows = self.driver.find_elements(By.XPATH, self.COMPANY_REQUISITES_ROW_XPATH)
-                for requesite_row in requesite_rows:
-                    element_texts = set(cell.text for cell in requesite_row.find_elements(By.CLASS_NAME, self.COMPANY_REQUISITES_CELL_CLASS_NAME))
-                    for element_text in element_texts:
-                        if element_text.find("наименование") > -1:
-                            element_texts.remove(element_text)
-                            return element_texts.pop()
-            except Exception as e:
-                print(f"Error fetching website: {e}")
+        if not self.driver.page_source:
             return None
+        try:
+            requesite_rows = self.driver.find_elements(By.XPATH, self.COMPANY_REQUISITES_ROW_XPATH)
+            for requesite_row in requesite_rows:
+                element_texts = set(cell.text for cell in
+                                    requesite_row.find_elements(By.CLASS_NAME, self.COMPANY_REQUISITES_CELL_CLASS_NAME))
+                for element_text in element_texts:
+                    if element_text.find("наименование") > -1:
+                        element_texts.remove(element_text)
+                        return element_texts.pop()
+        except Exception as e:
+            print(f"Error fetching website: {e}")
+        return None
 
     def _get_inn_code(self):
         if not self.driver.page_source:
@@ -235,7 +238,8 @@ class YellSeleniumSiteExecutor(SeleniumSiteExecutor):
         try:
             requesite_rows = self.driver.find_elements(By.XPATH, self.COMPANY_REQUISITES_ROW_XPATH)
             for requesite_row in requesite_rows:
-                element_texts = set(cell.text for cell in requesite_row.find_elements(By.CLASS_NAME, self.COMPANY_REQUISITES_CELL_CLASS_NAME))
+                element_texts = set(cell.text for cell in
+                                    requesite_row.find_elements(By.CLASS_NAME, self.COMPANY_REQUISITES_CELL_CLASS_NAME))
                 for element_text in element_texts:
                     if element_text.find("ИНН") > -1:
                         element_texts.remove(element_text)
@@ -243,7 +247,6 @@ class YellSeleniumSiteExecutor(SeleniumSiteExecutor):
         except Exception as e:
             print(f"Error fetching website: {e}")
         return None
-
 
 
 class BlizkoSeleniumSiteExecutor(SeleniumSiteExecutor):
@@ -259,7 +262,7 @@ class RusProfileSeleniumSiteExecutor(SeleniumSiteExecutor):
     """
     COMPANY_NAME_XPATH = '//h1[@itemprop="name"]'
     COMPANY_INN_XPATH = '//span[@id="clip_inn"]'
-    
+
     def _get_company_name(self):
         if not self.driver.page_source:
             return None
@@ -271,7 +274,7 @@ class RusProfileSeleniumSiteExecutor(SeleniumSiteExecutor):
         if name_element and name_element.is_displayed():
             return name_element.text
         return None
-    
+
     def _get_inn_code(self):
         if not self.driver.page_source:
             return None
@@ -284,12 +287,13 @@ class RusProfileSeleniumSiteExecutor(SeleniumSiteExecutor):
             return inn_element.text
         return None
 
+
 class RbcSeleniumSiteExecutor(SeleniumSiteExecutor):
     """
     Класс для получения сайта companies.rbc.ru
     """
     COMPANY_NAME_XPATH = '//h1[@class="company-headline__title"]/span'
-    
+
     def _get_company_name(self):
         if not self.driver.page_source:
             return None
@@ -301,10 +305,9 @@ class RbcSeleniumSiteExecutor(SeleniumSiteExecutor):
         if name_element and name_element.is_displayed():
             return name_element.text
         return None
-    
-    def _get_inn_code(self):
-        return None # На этом сайте ИНН находится общим методом, поэтому можно не реализовывать специальный
 
+    def _get_inn_code(self):
+        return None  # На этом сайте ИНН находится общим методом, поэтому можно не реализовывать специальный
 
 
 class VbankcenterSeleniumSiteExecutor(SeleniumSiteExecutor):
@@ -321,7 +324,6 @@ class ListOrgSeleniumSiteExecutor(SeleniumSiteExecutor):
     COMPANY_NAME_XPATH = '//h1[@itemprop="name"]'
     COMPANY_INN_XPATH = '//span[@id="clip_inn"]'
 
-    
     def _get_company_name(self):
         if not self.driver.page_source:
             return None
@@ -336,7 +338,7 @@ class ListOrgSeleniumSiteExecutor(SeleniumSiteExecutor):
         if name_element and name_element.is_displayed():
             return name_element.text
         return None
-    
+
     def _get_inn_code(self):
         if not self.driver.page_source:
             return None
@@ -351,7 +353,7 @@ class ListOrgSeleniumSiteExecutor(SeleniumSiteExecutor):
         except Exception as e:
             print(f"Error fetching website: {e}")
         return None
-    
+
     def _find_inn(self, text):
         pattern = r"^(\d{10}|\d{12})\s*/\s*(\d{10}|\d{12})$"
 
@@ -359,8 +361,6 @@ class ListOrgSeleniumSiteExecutor(SeleniumSiteExecutor):
         if match:
             return match.group(1)
         return None
-        
-
 
 
 class SabySeleniumSiteExecutor(SeleniumSiteExecutor):
@@ -382,16 +382,17 @@ class SabySeleniumSiteExecutor(SeleniumSiteExecutor):
         if name_element and name_element.is_displayed():
             return name_element.text
         return None
-    
+
     def _get_inn_code(self):
-        return None # На этом сайте ИНН находится общим методом, поэтому можно не реализовывать специальный
+        return None  # На этом сайте ИНН находится общим методом, поэтому можно не реализовывать специальный
+
 
 class VkSeleniumSiteExecutor(SeleniumSiteExecutor):
     """
     Класс для получения сайта vk.com
     """
     COMPANY_NAME_XPATH = '//span[@class="PostHeaderTitle__authorName"]'
-    
+
     def _get_company_name(self):
         if not self.driver.page_source:
             return None
@@ -403,58 +404,63 @@ class VkSeleniumSiteExecutor(SeleniumSiteExecutor):
         if name_element and name_element.is_displayed():
             return name_element.text
         return None
-       
 
 
 class EecologSeleniumSiteExecutor(SeleniumSiteExecutor):
-       """
+    """
        Класс для получения сайта e-ecolog.ru
        """
-       
-       def _get_company_name(self):
-            return None
-       
-       def _get_inn_code(self):
-            return None
+
+    def _get_company_name(self):
+        return None
+
+    def _get_inn_code(self):
+        return None
+
 
 class AsktelSeleniumSiteExecutor(SeleniumSiteExecutor):
-       """
+    """
        Класс для получения сайта asktel.ru
        """
+
     #    def get_site_info(self, url_link):
     #         self.driver.get(url_link)
     #         return self.driver.page_source, self._get_company_name(), self._get_inn_code()
-       
-       def _get_company_name(self):
-            return None
-       
-       def _get_inn_code(self):
-            return None
+
+    def _get_company_name(self):
+        return None
+
+    def _get_inn_code(self):
+        return None
+
 
 class BizlySeleniumSiteExecutor(SeleniumSiteExecutor):
-       """
+    """
        Класс для получения сайта bizly.ru
        """
+
     #    def get_site_info(self, url_link):
     #         self.driver.get(url_link)
     #         return self.driver.page_source, self._get_company_name(), self._get_inn_code()
-       
-       def _get_company_name(self):
-            return None
-       
-       def _get_inn_code(self):
-            return None
+
+    def _get_company_name(self):
+        return None
+
+    def _get_inn_code(self):
+        return None
+
 
 class SbisSeleniumSiteExecutor(SeleniumSiteExecutor):
-       """
+    """
        Класс для получения сайта sbis.ru
        """
+
     #    def get_site_info(self, url_link):
     #         self.driver.get(url_link)
     #         return self.driver.page_source, self._get_company_name(), self._get_inn_code()
-       
-       def _get_company_name(self):
-            return None
-       
-       def _get_inn_code(self):
-            return None
+
+    def _get_company_name(self):
+        return None
+
+    def _get_inn_code(self):
+        return None

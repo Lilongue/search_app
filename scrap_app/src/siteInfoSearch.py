@@ -12,7 +12,6 @@ class SiteInfoExtractor:
     _company_name = None
     _inn_code = None
 
-
     def __init__(self):
         pass
 
@@ -32,10 +31,12 @@ class SiteInfoExtractor:
 
     def extract_employer_info(self, employer_info: EmployerInfo):
         extracted_info = EmployerInfo()
-        extracted_info.phone = self._extract_phone(employer_info.phone) or self._extract_phone_variously(employer_info.phone)
+        extracted_info.phone = self._extract_phone(employer_info.phone) or self._extract_phone_variously(
+            employer_info.phone)
         extracted_info.email = self._extract_email(employer_info.email)
         extracted_info.site = self._extract_site(employer_info.site)
-        extracted_info.organization_name = self._company_name or self._extract_organization_name(employer_info.organization_name)
+        extracted_info.organization_name = self._company_name or self._extract_organization_name(
+            employer_info.organization_name)
         extracted_info.contact_person_name = self._extract_contact_person_name(employer_info.contact_person_name)
         extracted_info.code = self._inn_code or self._extract_code(employer_info.code)
         return extracted_info
@@ -48,7 +49,7 @@ class SiteInfoExtractor:
         if found_index != -1:
             return phone
         return None
-    
+
     def _extract_phone_variously(self, phone):
         if not phone:
             return phone
@@ -59,7 +60,6 @@ class SiteInfoExtractor:
                 return found_phone
         return None
 
-
     def _extract_email(self, email):
         if not email:
             return email
@@ -68,7 +68,6 @@ class SiteInfoExtractor:
         if found_index != -1:
             return email
         return None
-
 
     def _extract_site(self, site):
         if not site:
@@ -85,7 +84,6 @@ class SiteInfoExtractor:
         info_extractor = InfoExtractor(self._processed_content)
         return info_extractor.extract_organization_name(organization_name)
 
-
     def _extract_contact_person_name(self, contact_person_name):
         if not contact_person_name:
             return contact_person_name
@@ -94,7 +92,7 @@ class SiteInfoExtractor:
         if found_index != -1:
             return contact_person_name
         return None
-    
+
     def _extract_code(self, code):
         info_extractor = InfoExtractor(self._processed_content)
         return info_extractor.extract_code()
@@ -105,7 +103,7 @@ class InfoExtractor:
         if not text:
             self._text = ""
         self._text = text
-    
+
     def extract_phones(self):
         """
         Извлекаем все телефонные номера из текста.
@@ -160,15 +158,13 @@ class InfoExtractor:
         if phone.strip().startswith('8'):
             return '+7' + cleaned_phone[1:]
         return cleaned_phone
-    
+
     def extract_code(self):
         inn_code_regexp = r'ИНН\s+(\d{10}|\d{12})'
         codes = re.findall(inn_code_regexp, self._text)
         if len(codes) > 0:
             return codes[0]
         return None
-
-
 
 
 if __name__ == '__main__':
