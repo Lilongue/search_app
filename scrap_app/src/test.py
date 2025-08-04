@@ -1,6 +1,7 @@
 import unittest
 from siteInfoSearch import SiteInfoExtractor
 
+
 class TestSiteInfoExtractor(unittest.TestCase):
     def setUp(self):
         self.extractor = SiteInfoExtractor()
@@ -8,7 +9,7 @@ class TestSiteInfoExtractor(unittest.TestCase):
     def test_normalize_phone(self):
         # Import InfoExtractor directly for testing normalize_phone
         from siteInfoSearch import InfoExtractor
-        
+
         test_cases = [
             # input, expected output
             ("+7 (999) 123-45-67", "+79991234567"),
@@ -26,7 +27,7 @@ class TestSiteInfoExtractor(unittest.TestCase):
             ("+7‒921‒962‒15‒09", "+79219621509"),
             ("8 (921) 962-15-09", "+79219621509"),
         ]
-        
+
         info_extractor = InfoExtractor("")
         for input_phone, expected in test_cases:
             with self.subTest(input_phone=input_phone):
@@ -57,7 +58,7 @@ class TestSiteInfoExtractor(unittest.TestCase):
             ("Call +7 (999) 123-45-67 or 8 (888) 456-78-90", "+79991234567", "+7 (999) 123-45-67"),
             ("Phone: 8 (999) 123-45-67, Fax: 8 (888) 456-78-90", "89991234567", "8 (999) 123-45-67"),
         ]
-        
+
         for content, search_phone, expected in test_cases:
             with self.subTest(content=content, search_phone=search_phone):
                 self.extractor._processed_content = content
@@ -72,30 +73,31 @@ class TestSiteInfoExtractor(unittest.TestCase):
             ("Some content", None, None),
             ("", "+79991234567", None),
             (None, "+79991234567", None),
-            
+
             # Phone numbers with different formatting but same normalized value
             ("Call +7 (999) 123-45-67", "8 (999) 123-45-67", "+7 (999) 123-45-67"),
             ("Phone: 8 (999) 123-45-67", "+7 (999) 123-45-67", "8 (999) 123-45-67"),
-            
+
             # Phone numbers that don't match after normalization
             ("Call +7 (999) 123-45-67", "+7 (888) 123-45-67", None),
             ("Phone: 8 (999) 123-45-67", "8 (888) 123-45-67", None),
-            
+
             # Content with multiple similar phone numbers
             ("Call +7 (999) 123-45-67 or +7 (999) 123-45-68", "+79991234567", "+7 (999) 123-45-67"),
             ("Phone: 8 (999) 123-45-67, Mobile: 8 (999) 123-45-68", "89991234567", "8 (999) 123-45-67"),
-            
+
             # Test cases showing that various dash characters are now supported by regex
             ("Contact: +7‒921‒962‒15‒09", "+79219621509", "+7‒921‒962‒15‒09"),  # Figure dash (‒)
             ("Phone: +7–921–962–15–09", "+79219621509", "+7–921–962–15–09"),  # En dash (–)
             ("Call: +7—921—962—15—09", "+79219621509", "+7—921—962—15—09"),  # Em dash (—)
         ]
-        
+
         for content, search_phone, expected in test_cases:
             with self.subTest(content=content, search_phone=search_phone):
                 self.extractor._processed_content = content
                 result = self.extractor._extract_phone_variously(search_phone)
                 self.assertEqual(result, expected)
+
 
 if __name__ == "__main__":
     unittest.main()
