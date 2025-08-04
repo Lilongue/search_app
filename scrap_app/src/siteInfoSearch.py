@@ -102,6 +102,8 @@ class SiteInfoExtractor:
 
 class InfoExtractor:
     def __init__(self, text):
+        if not text:
+            self._text = ""
         self._text = text
     
     def extract_phones(self):
@@ -110,7 +112,10 @@ class InfoExtractor:
         Регулярное выражение ищет номера в различных форматах.
         """
         # This regex finds numbers in formats like +7(123)456-78-90, (123)456-78-90, 123-45-67, 123-4567
-        phone_regex = r"((?:\+?\d{1,3}[\s-]?)?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}|\d{3}[\s-]?\d{4}|\d{3}[\s-]?\d{2}[\s-]?\d{2})"
+        # Updated to handle various dash characters: regular dash (-), en dash (–), em dash (—), figure dash (‒)
+        phone_regex = r"((?:\+?\d{1,3}[\s\-\–—‒]?)?\(?\d{3}\)?[\s\-\–—‒]?\d{3}[\s\-\–—‒]?\d{2}[\s\-\–—‒]?\d{2}|\d{3}[\s\-\–—‒]?\d{4}|\d{3}[\s\-\–—‒]?\d{2}[\s\-\–—‒]?\d{2})"
+        if not self._text:
+            return []
         return re.findall(phone_regex, self._text)
 
     def extract_emails(self):

@@ -14,12 +14,12 @@ def parse():
     Ожидаемый JSON payload:
     {
         "url": "https://example.com",
-        "phone": "1234567890",
+        "phone": "+7 (999) 999-99-99",
         "email": "example@example.com",
         "site": "https://example.com",
-        "organization_name": "Example Inc.",
-        "contact_person_name": "John Doe",
-        "code": "1234567890"
+        "organization_name": "ИП Иванов",
+        "contact_person_name": "Иванов Иван",
+        "code": ""
     }
     
     Returns:
