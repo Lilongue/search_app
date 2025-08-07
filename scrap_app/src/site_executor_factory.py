@@ -14,14 +14,14 @@ class SiteExecutorFactory:
             return ZoonSeleniumSiteExecutor()  # + +
         elif "yell.ru" in url:
             return YellSeleniumSiteExecutor()  # + +
-        elif "blizko.ru" in url:
-            return BlizkoSeleniumSiteExecutor()  # ? -
+        elif "blizko.pro" in url:
+            return BlizkoSeleniumSiteExecutor()  # + +
         elif "rusprofile.ru" in url:
             return RusProfileSeleniumSiteExecutor()  # + +
         elif "companies.rbc.ru" in url:
             return RbcSeleniumSiteExecutor()  # + +
         elif "vbankcenter.ru" in url:
-            return VbankcenterSeleniumSiteExecutor()  # ? -
+            return VbankcenterSeleniumSiteExecutor()  # + +
         elif "list-org.com" in url:
             return ListOrgSeleniumSiteExecutor()  # ? ? похоже есть защита от роботов
         elif "saby.ru" in url:
@@ -253,7 +253,20 @@ class BlizkoSeleniumSiteExecutor(SeleniumSiteExecutor):
     """
     Класс для получения сайта blizko.ru
     """
-    pass  # TODO: реализовать (пока не нашел примеров)
+    def _get_company_name(self):
+        if not self.driver.page_source:
+            return None
+        try:
+            head_elements = self.driver.find_elements(By.TAG_NAME, 'h1')
+            if not head_elements:
+                return None
+            name_element = head_elements[0]
+        except Exception as e:
+            print(f"Error fetching website: {e}")
+            name_element = None
+        if name_element and name_element.is_displayed():
+            return name_element.text
+        return None
 
 
 class RusProfileSeleniumSiteExecutor(SeleniumSiteExecutor):
@@ -314,14 +327,27 @@ class VbankcenterSeleniumSiteExecutor(SeleniumSiteExecutor):
     """
     Класс для получения сайта vbankcenter.ru
     """
-    pass  # TODO: реализовать (пока не нашел примеров)
+
+    def _get_company_name(self):
+        if not self.driver.page_source:
+            return None
+        try:
+            head_elements = self.driver.find_elements(By.TAG_NAME, 'h1')
+            if not head_elements:
+                return None
+            name_element = head_elements[0]
+        except Exception as e:
+            print(f"Error fetching website: {e}")
+            name_element = None
+        if name_element and name_element.is_displayed():
+            return name_element.text
+        return None
 
 
 class ListOrgSeleniumSiteExecutor(SeleniumSiteExecutor):
     """
     Класс для получения сайта list-org.com
     """
-    COMPANY_NAME_XPATH = '//h1[@itemprop="name"]'
     COMPANY_INN_XPATH = '//span[@id="clip_inn"]'
 
     def _get_company_name(self):
